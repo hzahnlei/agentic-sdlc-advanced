@@ -46,3 +46,10 @@ VS Code reports some issues in `pom.xml`.
 The most recent versions I picked were not available on Maven Central.
 I asked Claude to fix these.
 Very quickly one finds himself in the fix-loop.
+
+### Adding Spec Templates and System Prompt
+
+I added template files to the `specs/` folder.
+I also added `CLAUDE.md` as a system prompt.
+`specs/guidelines` holds many guidelines for humans and AIs.
+Therefore, `CLAUDE.md` is rudimentary and mainly referring to `specs/`.
