@@ -2,7 +2,32 @@
 
 Agentic SDLC Advanced Excercise - Build an MCP server.
 
-## Steps
+## Usage
+
+### Prerequisites
+
+- Docker and Devbox installed locally
+
+### Running the Server
+
+```bash
+devbox shell    # Activate tool chain
+make db         # Start PostgreSQL server
+make run        # Start MCP server
+```
+
+Now register the server with you AI chat bot and you are good to go.
+
+### Shutting down
+
+Pess CTRL+C in the console to stop the MCP Tasks Server.
+Then run the following command to shut down PostgreSQL.
+
+```bash
+make db-down
+```
+
+## Steps I Took to Create this Repository
 
 ### Creating the Repository
 
@@ -58,3 +83,74 @@ Therefore, `CLAUDE.md` is rudimentary and mainly referring to `specs/`.
 
 I derived functional and technical specs from `Agentic SDLC Advanced Tasks.pdf` with the help of Claude.
 The examples and guidelines I provided in the preceeding step, were guiding Claude in the process.
+
+### Implementing the MCP Server
+
+Now that the technical and fucnctional requirements are documented, I have Claude implement them:
+
+```text
+The specification under `specs/` defines functional and technical requirements.
+Implement these accordingly.
+- Adhere to the `specs/guidelines/`.
+- Have Spring Data JPA create the database schema (no Flyway/Liquibase).
+- Generate the REST controller from the openAPI spec (`specs/APIs/provided/tasks.json`).
+  Add openAPI tooling to `pom.xml`.
+- Also implement step definitions for BDD testing (`specs/APIs/provided/tasks.json`).
+```
+
+### Adding the MCP Server to Claude
+
+Created file `.mcp.json` in project root to configure MCP server for this project only:
+
+```json
+{
+  "mcpServers": {
+    "mcp-task-server": {
+      "type": "sse",
+      "url": "http://localhost:8080/sse"
+    }
+  }
+}
+```
+
+MCP server is now recognized as `mcp-task-server`.
+However, I had to adapt the Tomcat configuration to fix a `SO_LINGER` for macOS and JDK ≥21.
+Also, Claude used stdio as the transport, even though ADR-002 opted for HTTP/SSE.
+Finally the Tasks MCP Server was recognized by Claude.
+
+However, the schema created by Claud did not foresee a due date.
+Therefore, I asked Claud to add it to the DB schema and API:
+
+```text
+Due dates for tasks are making sense.
+Add a due date field to the database table and API specification.
+```
+
+Ultimately I could manually test the server with this prompt:
+
+```text
+Use the mcp-schema-tasks tool to read the task input schema.
+Then use the mcp-tasks tool to insert 1,000 diverse tasks in batches of 50.
+Tasks should be realistic and varied:
+
+- status: mix of TODO, IN_PROGRESS, and DONE
+- title: drawn from software development, operations, and business domains
+- dueDate: spread across 2026-01 to 2026-12, roughly 20 % of tasks without a due date
+
+When all batches are done, call mcp-tasks-summary to confirm the total count.
+```
+
+I used the above prompt as it is more precise than the one given in the requirements:
+
+```text
+Please inspect the task schema at /mcp/schema/tasks.
+Then generate and insert 1000 diverse tasks with random statuses, titles, and due dates using the /mcp/tasks endpoint.
+```
+
+Checking the database:
+
+```bash
+docker exec -it <container_name> psql -U postgres -d mcpdb    # Use psql CLI client
+\dt public.*    # Show all tables in schema "public"
+SELECT count(*) FROM tasks;    # How many tasks are there?
+```

@@ -3,7 +3,7 @@
 | Field             | Value         |
 | ----------------- | ------------- |
 | **Date**          | 2026-03-24    |
-| **Status**        | Proposed      |
+| **Status**        | Accepted      |
 | **Deciders**      | Project owner |
 | **Supersedes**    | —             |
 | **Superseded by** | —             |
@@ -72,9 +72,9 @@ The JSON Schema describes the shape of one Task element in the `mcp-tasks` inser
   "type": "object",
   "required": ["title", "status"],
   "properties": {
-    "title":       { "type": "string" },
+    "title": { "type": "string" },
     "description": { "type": "string" },
-    "status":      { "type": "string", "enum": ["TODO", "IN_PROGRESS", "DONE"] }
+    "status": { "type": "string", "enum": ["TODO", "IN_PROGRESS", "DONE"] }
   }
 }
 ```

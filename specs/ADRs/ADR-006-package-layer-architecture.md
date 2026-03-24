@@ -3,7 +3,7 @@
 | Field             | Value         |
 | ----------------- | ------------- |
 | **Date**          | 2026-03-24    |
-| **Status**        | Proposed      |
+| **Status**        | Accepted      |
 | **Deciders**      | Project owner |
 | **Supersedes**    | —             |
 | **Superseded by** | —             |
@@ -45,9 +45,9 @@ and the dependency rule is verifiable on every `mvn test` run.
 ### Enforcement mechanism
 
 A. **ArchUnit `LayeredArchitecture` DSL** — declares layers by package pattern and asserts
-   the allowed access directions in a single JUnit 5 test class.
+the allowed access directions in a single JUnit 5 test class.
 B. **Granular ArchUnit slice rules** — individual `noClasses().that()...should()` assertions
-   per dependency direction.
+per dependency direction.
 C. **No enforcement** — rely on code review only.
 
 ## Decision Outcome

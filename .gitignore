@@ -38,3 +38,6 @@ bin/
 
 # Devbox
 .devbox/
+
+# Local MCP server configuration (not committed — use .mcp.json.example as template)
+.mcp.json

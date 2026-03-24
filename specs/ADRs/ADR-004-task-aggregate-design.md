@@ -3,7 +3,7 @@
 | Field             | Value         |
 | ----------------- | ------------- |
 | **Date**          | 2026-03-24    |
-| **Status**        | Proposed      |
+| **Status**        | Accepted      |
 | **Deciders**      | Project owner |
 | **Supersedes**    | —             |
 | **Superseded by** | —             |
@@ -38,25 +38,29 @@ for closed type hierarchies with per-variant behaviour.
 ## Considered Options
 
 ### Aggregate boundary
+
 1. **Standalone aggregate root** — one table `task`, no child entities.
 2. **Task with child entities** — e.g., `Tag` or `Comment` owned by the Task aggregate.
 
 ### Status representation
+
 A. **`String` field** — flexible; no compile-time enforcement.
 B. **`enum TaskStatus`** — closed set, compile-time safe, directly mappable to `VARCHAR` with
-   `@Enumerated(EnumType.STRING)`, usable in JPQL `GROUP BY status`.
+`@Enumerated(EnumType.STRING)`, usable in JPQL `GROUP BY status`.
 C. **Sealed class hierarchy** — carries per-status behaviour; appropriate only when each
-   status variant requires distinct methods.
+status variant requires distinct methods.
 
 ### Primary key type
+
 I. **`Long` auto-increment** — simple, compact, single-node appropriate.
 II. **`UUID`** — globally unique; necessary for distributed or replicated systems.
 
 ### Status transition enforcement
+
 X. **Guarded transitions in the `Task` domain class** — a `transition(TaskStatus next)`
-   method rejects illegal state changes.
+method rejects illegal state changes.
 Y. **Freely settable on creation** — the AI agent supplies an initial status; the server
-   validates it is a known enum value, but enforces no transition table.
+validates it is a known enum value, but enforces no transition table.
 
 ## Decision Outcome
 
@@ -80,14 +84,14 @@ Y. **Freely settable on creation** — the AI agent supplies an initial status; 
 
 Table name `task` (singular, per `data_modeling.md`):
 
-| Column       | Type                    | Constraints          |
-|--------------|-------------------------|----------------------|
-| `id`         | `BIGSERIAL`             | `PRIMARY KEY`        |
-| `title`      | `VARCHAR(255)`          | `NOT NULL`           |
-| `description`| `TEXT`                  | nullable             |
-| `status`     | `VARCHAR(50)`           | `NOT NULL`           |
-| `created_at` | `TIMESTAMPTZ`           | `NOT NULL`           |
-| `updated_at` | `TIMESTAMPTZ`           | `NOT NULL`           |
+| Column        | Type           | Constraints   |
+| ------------- | -------------- | ------------- |
+| `id`          | `BIGSERIAL`    | `PRIMARY KEY` |
+| `title`       | `VARCHAR(255)` | `NOT NULL`    |
+| `description` | `TEXT`         | nullable      |
+| `status`      | `VARCHAR(50)`  | `NOT NULL`    |
+| `created_at`  | `TIMESTAMPTZ`  | `NOT NULL`    |
+| `updated_at`  | `TIMESTAMPTZ`  | `NOT NULL`    |
 
 ### Positive Consequences
 

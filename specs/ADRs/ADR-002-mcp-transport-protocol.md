@@ -3,7 +3,7 @@
 | Field             | Value         |
 | ----------------- | ------------- |
 | **Date**          | 2026-03-24    |
-| **Status**        | Proposed      |
+| **Status**        | Accepted      |
 | **Deciders**      | Project owner |
 | **Supersedes**    | —             |
 | **Superseded by** | —             |

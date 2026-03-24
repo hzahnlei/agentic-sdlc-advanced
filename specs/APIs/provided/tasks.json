@@ -203,6 +203,11 @@
           },
           "status": {
             "$ref": "#/components/schemas/TaskStatus"
+          },
+          "dueDate": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Optional deadline for the task (ISO 8601 date, e.g. 2026-12-31)."
           }
         }
       },
@@ -226,6 +231,11 @@
           },
           "status": {
             "$ref": "#/components/schemas/TaskStatus"
+          },
+          "dueDate": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Optional deadline for the task (ISO 8601 date, e.g. 2026-12-31)."
           },
           "createdAt": {
             "type": "string",

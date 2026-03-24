@@ -79,6 +79,22 @@ Feature: Insert Tasks in Bulk
   # Idempotency
   # ---------------------------------------------------------------------------
 
+  # ---------------------------------------------------------------------------
+  # dueDate field
+  # ---------------------------------------------------------------------------
+
+  Scenario: UC002-S06 Tasks with due dates are persisted and returned
+    Given a batch of 1 valid tasks:
+      | title        | status | dueDate    |
+      | Plan release | TODO   | 2026-12-31 |
+    When  the AI Agent submits the batch to "POST /v1/mcp/tasks"
+    Then  the response status is 201
+    And   each returned task has a non-null "dueDate"
+
+  # ---------------------------------------------------------------------------
+  # Idempotency
+  # ---------------------------------------------------------------------------
+
   Scenario: UC002-S05 Repeated request with the same Idempotency-Key does not create duplicate records
     Given a batch of 2 valid tasks:
       | title        | status |

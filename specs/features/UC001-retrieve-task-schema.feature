@@ -46,3 +46,13 @@ Feature: Retrieve Task Schema
     When  the AI Agent requests the Task schema at "GET /v1/mcp/schema/tasks"
     Then  the response status is 200
     And   the schema property "status" allows exactly the values "TODO", "IN_PROGRESS", "DONE"
+
+  # ---------------------------------------------------------------------------
+  # Schema content — dueDate field
+  # ---------------------------------------------------------------------------
+
+  Scenario: UC001-S04 Schema exposes optional dueDate field
+    When  the AI Agent requests the Task schema at "GET /v1/mcp/schema/tasks"
+    Then  the response status is 200
+    And   the schema properties include "dueDate"
+    And   the schema "required" array does not contain "dueDate"
