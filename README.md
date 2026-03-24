@@ -53,3 +53,8 @@ I added template files to the `specs/` folder.
 I also added `CLAUDE.md` as a system prompt.
 `specs/guidelines` holds many guidelines for humans and AIs.
 Therefore, `CLAUDE.md` is rudimentary and mainly referring to `specs/`.
+
+### Deriving Specification from Agentic SDLC Advanced Tasks.pdf
+
+I derived functional and technical specs from `Agentic SDLC Advanced Tasks.pdf` with the help of Claude.
+The examples and guidelines I provided in the preceeding step, were guiding Claude in the process.

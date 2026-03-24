@@ -19,9 +19,9 @@ Add one row per provided API.
 Keep in sync with specs/architecture/system_context.md.
 -->
 
-| File        | Protocol | Consumers            | Notes |
-| ----------- | -------- | -------------------- | ----- |
-| `TODO.yaml` | REST     | TODO: Who calls this | TODO  |
+| File         | Protocol | Consumers | Notes                                                    |
+| ------------ | -------- | --------- | -------------------------------------------------------- |
+| `tasks.json` | REST     | AI agents | MCP tools: schema inspection, bulk insert, summary, help |
 
 ## Guidelines
 
