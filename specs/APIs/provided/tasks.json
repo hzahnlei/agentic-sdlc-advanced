@@ -1,0 +1,460 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MCP Task Server",
+    "description": "Model Context Protocol (MCP) server for AI-powered Task Management data injection. Exposes four tools that allow an AI agent to inspect the task schema, insert task records in bulk, retrieve aggregate statistics, and discover available capabilities.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/v1/mcp/schema/tasks": {
+      "get": {
+        "operationId": "mcp-schema-tasks",
+        "summary": "Return the JSON Schema for the Task resource",
+        "description": "Returns a JSON Schema document that describes the shape of a single Task object as expected by the `POST /v1/mcp/tasks` insertion endpoint. AI agents use this schema to construct well-formed task payloads before calling the insertion tool.",
+        "tags": ["MCP Tools"],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for a Task input object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskJsonSchema"
+                },
+                "example": {
+                  "type": "object",
+                  "required": ["title", "status"],
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Short summary of the task"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Optional detailed description"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["TODO", "IN_PROGRESS", "DONE"],
+                      "description": "Current lifecycle status of the task"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/v1/mcp/tasks": {
+      "post": {
+        "operationId": "mcp-tasks",
+        "summary": "Bulk-insert Task records",
+        "description": "Accepts a JSON array of Task input objects and persists them to the database in a single transaction. Intended for AI-driven bulk data injection. All records in the request are inserted atomically; a validation failure in any item rejects the entire batch.",
+        "tags": ["MCP Tools"],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Client-supplied UUID that makes the request idempotent. Repeated calls with the same key within 24 hours return the original response without re-inserting.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TaskInput"
+                },
+                "minItems": 1,
+                "maxItems": 5000
+              },
+              "example": [
+                {
+                  "title": "Design database schema",
+                  "description": "Define tables, columns, and indexes for the task management module.",
+                  "status": "DONE"
+                },
+                {
+                  "title": "Implement MCP server",
+                  "status": "IN_PROGRESS"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "All tasks created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/v1/mcp/tasks/summary": {
+      "get": {
+        "operationId": "mcp-tasks-summary",
+        "summary": "Return task count statistics grouped by status",
+        "description": "Returns aggregate statistics for all task records currently in the database, broken down by status value. AI agents use this endpoint to validate that a previous bulk insertion produced the expected distribution of records.",
+        "tags": ["MCP Tools"],
+        "responses": {
+          "200": {
+            "description": "Task summary statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSummary"
+                },
+                "example": {
+                  "counts": {
+                    "TODO": 412,
+                    "IN_PROGRESS": 235,
+                    "DONE": 353
+                  },
+                  "total": 1000
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/v1/mcp/help": {
+      "get": {
+        "operationId": "mcp-help",
+        "summary": "List available MCP tools and their descriptions",
+        "description": "Returns a machine-readable description of every tool exposed by this MCP server, including the tool name, a natural-language description, the HTTP method and path, and a link to the relevant OpenAPI operation. Intended for AI agent discovery.",
+        "tags": ["MCP Tools"],
+        "responses": {
+          "200": {
+            "description": "Available MCP tools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TaskStatus": {
+        "type": "string",
+        "enum": ["TODO", "IN_PROGRESS", "DONE"],
+        "description": "Lifecycle status of a task. Set by the caller on creation; no server-side transition enforcement."
+      },
+      "TaskInput": {
+        "type": "object",
+        "description": "Payload for creating a single task. Server generates id, createdAt, and updatedAt.",
+        "required": ["title", "status"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Short summary of the task."
+          },
+          "description": {
+            "type": ["string", "null"],
+            "description": "Optional detailed description of the task."
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskStatus"
+          },
+          "dueDate": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Optional deadline for the task (ISO 8601 date, e.g. 2026-12-31)."
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "description": "A persisted task record as returned by the server.",
+        "required": ["id", "title", "status", "createdAt", "updatedAt"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Surrogate primary key, server-assigned on creation."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskStatus"
+          },
+          "dueDate": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Optional deadline for the task (ISO 8601 date, e.g. 2026-12-31)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of record creation (UTC)."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of last update (UTC)."
+          }
+        }
+      },
+      "TaskJsonSchema": {
+        "type": "object",
+        "description": "A JSON Schema document (draft-07 compatible) that describes the shape of a TaskInput object. The exact content mirrors the TaskInput schema defined in this OpenAPI spec.",
+        "additionalProperties": true
+      },
+      "TaskSummary": {
+        "type": "object",
+        "description": "Aggregate statistics for task records in the database.",
+        "required": ["counts", "total"],
+        "properties": {
+          "counts": {
+            "type": "object",
+            "description": "Number of tasks per status value.",
+            "required": ["TODO", "IN_PROGRESS", "DONE"],
+            "properties": {
+              "TODO": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "IN_PROGRESS": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "DONE": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sum of all status counts; equals the total number of task records."
+          }
+        }
+      },
+      "ToolDescription": {
+        "type": "object",
+        "required": ["name", "description", "method", "path"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "MCP tool identifier."
+          },
+          "description": {
+            "type": "string",
+            "description": "Natural-language description for AI agent tool selection."
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+          },
+          "path": {
+            "type": "string",
+            "description": "HTTP path relative to the server base URL."
+          }
+        }
+      },
+      "HelpInfo": {
+        "type": "object",
+        "required": ["tools"],
+        "properties": {
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ToolDescription"
+            }
+          }
+        },
+        "example": {
+          "tools": [
+            {
+              "name": "mcp-schema-tasks",
+              "description": "Returns the JSON Schema describing the shape of a Task input object. Call this first to understand what fields are required before inserting tasks.",
+              "method": "GET",
+              "path": "/v1/mcp/schema/tasks"
+            },
+            {
+              "name": "mcp-tasks",
+              "description": "Accepts a JSON array of Task objects and persists them to the database. Use the schema from mcp-schema-tasks to construct valid payloads.",
+              "method": "POST",
+              "path": "/v1/mcp/tasks"
+            },
+            {
+              "name": "mcp-tasks-summary",
+              "description": "Returns task counts grouped by status (TODO, IN_PROGRESS, DONE) and total. Use this to validate that bulk insertion produced the expected data distribution.",
+              "method": "GET",
+              "path": "/v1/mcp/tasks/summary"
+            },
+            {
+              "name": "mcp-help",
+              "description": "Returns this list of available MCP tools and their descriptions.",
+              "method": "GET",
+              "path": "/v1/mcp/help"
+            }
+          ]
+        }
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "JSON path to the offending field, e.g. '[2].status'."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Human-readable explanation of the validation failure."
+          }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Machine-readable error code, e.g. INVALID_INPUT, VALIDATION_FAILED."
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable summary of the error."
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                },
+                "description": "Per-field validation errors, present on 400 and 422 responses."
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Malformed request body or missing required fields",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "example": {
+              "error": {
+                "code": "INVALID_INPUT",
+                "message": "Request body is not valid JSON or is missing required fields.",
+                "details": [
+                  {
+                    "field": "[0].title",
+                    "reason": "must not be blank"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "Request is syntactically valid but semantically rejected (e.g. unknown status value)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "example": {
+              "error": {
+                "code": "VALIDATION_FAILED",
+                "message": "One or more task records contain invalid field values.",
+                "details": [
+                  {
+                    "field": "[5].status",
+                    "reason": "must be one of TODO, IN_PROGRESS, DONE"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Unexpected server-side error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "example": {
+              "error": {
+                "code": "INTERNAL_ERROR",
+                "message": "An unexpected error occurred. Please try again later."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "MCP Tools",
+      "description": "Endpoints exposed as MCP tools for AI agent interaction. See ADR-002 for transport details and ADR-003 for tool registration strategy."
+    }
+  ]
+}

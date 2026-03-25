@@ -1,0 +1,213 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2026-03-02T02:42:23Z",
+      "resolved": "github:NixOS/nixpkgs/93178f6a00c22fcdee1c6f5f9ab92f2072072ea9?lastModified=1772419343&narHash=sha256-QU3Cd5DJH7dHyMnGEFfPcZDaCAsJQ6tUD%2BJuUsYqnKU%3D"
+    },
+    "gnumake@4.4.1": {
+      "last_modified": "2026-03-02T11:03:52Z",
+      "resolved": "github:NixOS/nixpkgs/dc7513872406b53d2ff417a003895d6daffdff2f#gnumake",
+      "source": "devbox-search",
+      "version": "4.4.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/l8jkq4dnsknlxz436w6gw5rcm09mvq6p-gnumake-4.4.1",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/0qrs1ij6pa43h6d2kvy432gii6gzdyww-gnumake-4.4.1-man",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/rz0cl03rws25hb625ysz58h4jci9zaxx-gnumake-4.4.1-doc"
+            },
+            {
+              "name": "info",
+              "path": "/nix/store/a5aasi52xsdvwxn1kqsxahfr40b92cb9-gnumake-4.4.1-info"
+            }
+          ],
+          "store_path": "/nix/store/l8jkq4dnsknlxz436w6gw5rcm09mvq6p-gnumake-4.4.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ll59b86m0kn5gxmk0qvrgb5vkl7wsw6d-gnumake-4.4.1",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/3avxkf4xbqp7r0sarmij3cs6ig2whn0l-gnumake-4.4.1-man",
+              "default": true
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/1ba52w1pz1h7jfi4kc02m21jxvncwb14-gnumake-4.4.1-debug"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/r238n9mfsxpl826l35127ng810pifb7c-gnumake-4.4.1-doc"
+            },
+            {
+              "name": "info",
+              "path": "/nix/store/d49b6qcdpzxqifrysyc2a63x2hdcgbyn-gnumake-4.4.1-info"
+            }
+          ],
+          "store_path": "/nix/store/ll59b86m0kn5gxmk0qvrgb5vkl7wsw6d-gnumake-4.4.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vrsm757lm1rfwqplz17cynq1g9fcyv8w-gnumake-4.4.1",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/1pvfnfv9abkm4w76r728bhbl7i1fm0vv-gnumake-4.4.1-man",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/d5iqi0n18b0qhkdzn43ninhwlnr6cp5y-gnumake-4.4.1-doc"
+            },
+            {
+              "name": "info",
+              "path": "/nix/store/cr97vh5g50wql7k3v7gvkiinxyq3plbq-gnumake-4.4.1-info"
+            }
+          ],
+          "store_path": "/nix/store/vrsm757lm1rfwqplz17cynq1g9fcyv8w-gnumake-4.4.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/d0irz6jq0d16h6iggq1mcwwvvxzi4lvy-gnumake-4.4.1",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/glc6p5665hd292d3lx1a7rz3f8zwb0r2-gnumake-4.4.1-man",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/s5mwixm6ks90jxkz69vsl4mdafqqw4kb-gnumake-4.4.1-doc"
+            },
+            {
+              "name": "info",
+              "path": "/nix/store/d0jpi3dn36051rnlpcl218yjc2k2mm79-gnumake-4.4.1-info"
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/lja6ghxrkm2c0i6cgyd88ckpzkdiwjy4-gnumake-4.4.1-debug"
+            }
+          ],
+          "store_path": "/nix/store/d0irz6jq0d16h6iggq1mcwwvvxzi4lvy-gnumake-4.4.1"
+        }
+      }
+    },
+    "maven@3.9.12": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#maven",
+      "source": "devbox-search",
+      "version": "3.9.12",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/njv115l854b6s5xi8z5s9bv1azicq3wk-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/njv115l854b6s5xi8z5s9bv1azicq3wk-maven-3.9.12"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/60qkfjzwrb323k2yp76fvfi8lbbc0qq1-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/60qkfjzwrb323k2yp76fvfi8lbbc0qq1-maven-3.9.12"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/z7w3vf9hcfhk8njv3f8yisb578xpprlv-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/z7w3vf9hcfhk8njv3f8yisb578xpprlv-maven-3.9.12"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xy25nymi63dy0ilp373hp6q1p5cbdir9-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xy25nymi63dy0ilp373hp6q1p5cbdir9-maven-3.9.12"
+        }
+      }
+    },
+    "temurin-bin-25@25.0.0": {
+      "last_modified": "2025-10-22T20:59:19Z",
+      "resolved": "github:NixOS/nixpkgs/01b6809f7f9d1183a2b3e081f0a1e6f8f415cb09#temurin-bin-25",
+      "source": "devbox-search",
+      "version": "25.0.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1jp5jv9ncr2n5jfxm8c2s4hdvji541yp-temurin-bin-25.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1jp5jv9ncr2n5jfxm8c2s4hdvji541yp-temurin-bin-25.0.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yjr4pmdb7nifps2fd5g9dc0kyszx6l84-temurin-bin-25.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yjr4pmdb7nifps2fd5g9dc0kyszx6l84-temurin-bin-25.0.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yg41qpbl2sj41l9anlsy8bx9sqwp2ad9-temurin-bin-25.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yg41qpbl2sj41l9anlsy8bx9sqwp2ad9-temurin-bin-25.0.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2vk2rsq58mzf3xij5n7cpq96nwg9p9sq-temurin-bin-25.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2vk2rsq58mzf3xij5n7cpq96nwg9p9sq-temurin-bin-25.0.0"
+        }
+      }
+    }
+  }
+}
