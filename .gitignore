@@ -41,3 +41,6 @@ bin/
 
 # Local MCP server configuration (not committed — use .mcp.json.example as template)
 .mcp.json
+
+test_reports
+.claude
