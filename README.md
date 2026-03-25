@@ -2,6 +2,8 @@
 
 Agentic SDLC Advanced Excercise - Build an MCP server.
 
+Read the [documentation](https://hzahnlei.github.io/agentic-sdlc-advanced/).
+
 ## Usage
 
 ### Prerequisites
