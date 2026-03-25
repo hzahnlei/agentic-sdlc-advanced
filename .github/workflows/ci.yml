@@ -1,0 +1,88 @@
+# Pipeline calls make targets to keep CI thin and logic in the Makefile.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+jobs:
+
+  # ── Compile ────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+      - run: make build
+
+  # ── Unit and component tests ───────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+      - run: make test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: test_reports/tests/
+          retention-days: 7
+
+  # ── Code coverage (JaCoCo → Cobertura) ────────────────────────────────────
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: make coverage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: test_reports/coverage/
+          retention-days: 7
+
+  # ── Docs → GitHub Pages (tag vX.Y.Z only) ─────────────────────────────────
+  docs:
+    name: Docs
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, test, coverage]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install -r requirements-docs.txt
+      - run: mkdocs build --site-dir public
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - uses: actions/deploy-pages@v4
+        id: deployment
